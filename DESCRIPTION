@@ -1,0 +1,18 @@
+Package: dtverse
+Title: reshape data table
+Version: 0.1.0
+Authors@R: 
+    person(given = "Jiena",
+           family = "McLellan",
+           role = c("aut", "cre"),
+           email = "jienagu90@gmail.com",
+           comment = c(ORCID = "0000-0002-5578-088X"))
+Description: reshape data table
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr
+License: MIT + file LICENSE
+Imports:
+    data.table
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.0.2

@@ -1,0 +1,159 @@
+---
+title: "Introduction to dtverse"
+author: "Jiena Gu McLellan"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to dtverse}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Built on the top of data.table, `dtverse` is a grammar of data manipulation with data.table, providing a consistent a series of utility functions that help you solve the most common data manipulation challenges:
+
+* Select columns
+* Split one column to multiple columns based on patterns
+* Filter cases based on their values
+* Fill missing values
+* Summarize and reduces multiple values down to a single summary
+* Reshape `long to wide` or `wide to long`
+
+## Select columns
+Select variables in a data table. You can also use predicate functions like is.numeric to select variables based on their properties (e.g. 1:3 selects the first column to the third column).
+
+```{r ex1}
+library(dtverse)
+library(data.table)
+data("dt_dates")
+dt_dates <- setDT(dt_dates)
+dtverse::select_cols(dt_dates, c("Start_Date", "Full_name"))
+```
+
+
+## Split a column
+Split a column with its special pattern, and assign to multiple columns respectively. For example, split full name column to first name and last name column. 
+
+```{r ex2}
+data("dt_dates")
+library(data.table)
+data("dt_dates")
+dtverse::str_split_col(dt_dates,
+              by_col = "Full_name",
+              by_pattern = ", ",
+              match_to_names = c("First Name", "Last Name"))
+```
+
+
+## Filter cases based on values
+
+`filter_all()` is to return a data table with **ALL** columns (greater than/ less than/ equal to) a desired value. 
+
+```{r ex3}
+data("dt_values")
+dtverse::filter_all(dt_values, operator = "l", .2)
+```
+
+`filter_any()` is to return a data table with **ANY** columns (greater than/ less than/ equal to) a desired value. 
+
+
+```{r ex4}
+data("dt_values")
+dtverse::filter_any(dt_values, operator = "l", .1)
+```
+
+Similarly, `filter_all_at()` is to return a data table with **ALL selected** columns (greater than/ less than/ equal to) a desired value. 
+
+```{r ex5}
+data("dt_values")
+dtverse::filter_all_at(dt_values, operator = "l", .1, c("A1", "A2"))
+```
+
+Similarly, `filter_any_at()` is to return a data table with **ANY selected** columns (greater than/ less than/ equal to) a desired value. 
+
+
+```{r ex6}
+data("dt_values")
+dtverse::filter_any_at(dt_values, operator = "l", .1, c("A1", "A2"))
+```
+
+## Fill missing values
+
+`fill_NA_with()` will fill NA value with a desired value in the selected columns. If `fill_cols` is `All` (same columns type), it will apply to the whole data table.
+
+```{r ex7}
+data("dt_missing")
+dtverse::fill_NA_with(dt_missing, fill_cols = c("Full_name"), fill_value = "pending")
+```
+
+## Group by and summarize
+
+`dt_group_by()` is to group by desired columns and summarize rows within groups. 
+
+
+```{r ex8}
+data("dt_groups")
+print(head(dt_groups))
+```
+
+Now we see the `dt_groups` data table has A1, A2 as numeric columns, and group1, group2 as group infomation. 
+
+```{r ex9}
+data("dt_groups")
+dtverse::dt_group_by(dt_groups, 
+            group_by_cols = c("group1", "group2"), 
+            summarize_at = "A1", 
+            operation = "mean")
+```
+
+Now we want to group by group1 and group2, then fetch the first within each group, we can use `get_row_group_by()` function. 
+
+```{r ex10}
+data("dt_groups")
+dtverse::get_row_group_by(dt_groups, 
+                 group_by_cols = c("group1", "group2"), 
+                 fetch_row = "first")
+```
+
+or last row with same example. 
+
+```{r ex11}
+data("dt_groups")
+dtverse::get_row_group_by(dt_groups, 
+                 group_by_cols = c("group1", "group2"), 
+                 fetch_row = "last")
+```
+
+
+## Reshape `long to wide` or `wide to long`
+
+Here is an example of reshaping a data table from wide to long. 
+
+```{r ex12}
+data("dt_dates")
+print(head(dt_dates))
+dtverse::reshape_longer(dt_dates, 
+               keep_cols = "Full_name", 
+               by_pattern = "Date", 
+               label_cols = c("Date_Type"), 
+               value_cols = "Exact_date", 
+               fill_NA_with = NULL)
+```
+
+Here is an example of reshaping a data table from long to wide. 
+
+```{r ex13}
+data("dt_long")
+print(head(dt_long))
+dtverse::reshape_wider(dt_long, 
+              keep_cols = c("Full_name"), 
+              col_lable = c("Date_Type"), 
+              col_value = "Exact_date")
+```
+
