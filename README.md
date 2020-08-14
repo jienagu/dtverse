@@ -24,7 +24,7 @@ challenges:
 You can install from github:
 
 ``` r
-install.packages("dtverse")
+devtools::install_github("jienagu/dtverse")
 ```
 
 ## Select columns
