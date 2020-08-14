@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# dtverse
+# dtverse <img src="dtverse_logo.png"  width="180px" align="right"/>
 
 <!-- badges: start -->
 
